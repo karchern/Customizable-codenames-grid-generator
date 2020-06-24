@@ -4,9 +4,10 @@
 <head>
   <meta charset="utf-8">
   <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <script type="text/javascript">
     function draw_words() {
-
 
         svg.selectAll("*").remove();
       // Labels of row and columns
@@ -47,10 +48,6 @@
         for (let i = 0; i < 1; i++){
           d.push(3)
         }
-        console.log(d.length)
-
-
-        svg.selectAll('rect').data([]).exit().remove()
 
         var c = 0
         var matrix_object = []
@@ -92,25 +89,26 @@
         var myGroups = ["A1", "B1", "C1", "D1", "E1"]
         var myVars = ["A2", "B2", "C2", "D2"]
 
-        svg.select('svg').attr('height', 450 * (4/5))
+
 
         // Build X scales and axis:
         var x = d3.scaleBand()
           .range([ 0, width ])
           .domain(myGroups)
           .padding(0.01);
-        svg.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(x))
+        // svg.append("g")
+        //   .attr("transform", "translate(0," + height + ")")
+        //   .call(d3.axisBottom(x))
 
         // Build X scales and axis:
         var y = d3.scaleBand()
           .range([ height, 0 ])
           .domain(myVars)
           .padding(0.01);
-        svg.append("g")
-          .call(d3.axisLeft(y));
+        // svg.append("g")
+        //   .call(d3.axisLeft(y));
 
+        svg.selectAll('rect').data([]).exit().remove()
         var d = [];
         // Team 1
         for (let i = 0; i < 7; i++){
@@ -128,8 +126,6 @@
         for (let i = 0; i < 1; i++){
           d.push(3)
         }
-
-        svg.selectAll('rect').data([]).exit().remove()
 
         var c = 0
         var matrix_object = []
@@ -162,27 +158,24 @@
             .attr("height", y.bandwidth() )
             .style("fill", function(d) { return myColor(d.value)} )
     }
-
-    //
-
-    // }
     </script>
   </script>
 </head>
 <body>
-  <p> This is a code dummy code names generator </p>
-  <div id="n1" class="btn">
+  <p> My hands are typing words </p>
+  <div id="n1" class="btn" style="float:left">
     <input name="updateButton"
            type="button"
-           value="new grid (pictures-version)"
+           value="new grid (pictures)"
     />
   </div>
   <div id="n2" class="btn">
     <input name="updateButton"
            type="button"
-           value="new grid (words-version)"
+           value="new grid (words)"
     />
   </div>
+
   <!-- Create a div where the graph will take place -->
   <div id="my_dataviz"></div>
   <script>
