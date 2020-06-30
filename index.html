@@ -6,8 +6,37 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
   <script type="text/javascript">
-    function draw_words() {
+
+    function handleClick() {
+      //console.log('test')
+      trans = document.getElementById("myVal").value
+      draw_words(reset = false)
+      return false;
+    }
+
+    function draw_words(reset = true) {
+
+      // Check if trans argument is defined. If defined, set seed to value in trans. If undefined, run define trans and write to text.
+      // The Math.random function produces a random number based on the current time
+
+      if (reset) {
+        trans = Math.floor(Math.random() * 10000)
+      }
+
+      var myrng = new Math.seedrandom(trans)
+
+      var margin = {top: 30, right: 30, bottom: 30, left: 30},
+      width = 700 - margin.left - margin.right,
+      height = 700 - margin.top - margin.bottom;
+
+      d3.select('svg')
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
 
         svg.selectAll("*").remove();
       // Labels of row and columns
@@ -53,7 +82,7 @@
         var matrix_object = []
 
         for (i = d.length-1 ; i > 0; i--){
-          const j = Math.floor(Math.random() * i)
+          const j = Math.floor(myrng() * i)
           const temp = d[i]
           d[i] = d[j]
           d[j] = temp
@@ -79,17 +108,30 @@
             .attr("width", x.bandwidth() )
             .attr("height", y.bandwidth() )
             .style("fill", function(d) { return myColor(d.value)} )
+
+    d3.select("#trans").text(trans)
+
     }
 
     function draw_pics() {
+
+        var margin = {top: 30, right: 30, bottom: 30, left: 30},
+        width = 700 - margin.left - margin.right,
+        height = (700 *(4/5)) - margin.top - margin.bottom;
+
+
+        d3.select('svg')
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
 
         svg.selectAll("*").remove();
 
       // Labels of row and columns
         var myGroups = ["A1", "B1", "C1", "D1", "E1"]
         var myVars = ["A2", "B2", "C2", "D2"]
-
-
 
         // Build X scales and axis:
         var x = d3.scaleBand()
@@ -162,7 +204,7 @@
   </script>
 </head>
 <body>
-  <p> My hands are typing words </p>
+  <!-- <p> My hands are typing words </p> -->
   <div id="n1" class="btn" style="float:left">
     <input name="updateButton"
            type="button"
@@ -176,22 +218,33 @@
     />
   </div>
 
+
+  <div style="float:left">
+  <form name="myform" onSubmit="return handleClick()">
+    <input type="text" id="myVal" placeholder="Put seed to generate grid&hellip;">
+  </form>
+  </div>
+
+  <div style="float:left">
+  <form name="myform2" onSubmit="return handleClick()">
+    <input type="text" id="myVal" placeholder="Put seed to generate grid&hellip;">
+  </form>
+  </div>
+
   <!-- Create a div where the graph will take place -->
-  <div id="my_dataviz"></div>
+  <div id="grid"></div>
+  <div id="trans"></div>
   <script>
 
-    var margin = {top: 30, right: 30, bottom: 30, left: 30},
-    width = 450 - margin.left - margin.right,
-    height = 450 - margin.top - margin.bottom;
+    // Initiate seed variable
+    var trans = undefined
 
     // append the svg object to the body of the page
-    var svg = d3.select("#my_dataviz")
+    var svg = d3.select("#grid")
     .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
+
+    // append text field for seed variable
+    d3.select("#trans").append('p')
 
     // Build color scale
     var myColor = d3.scaleLinear()
@@ -201,15 +254,13 @@
 
     d3.select("#n1")
       .on("click", function() {
-        draw_pics();
+        draw_pics(reset = true);
       });
 
     d3.select("#n2")
       .on("click", function() {
-        draw_words();
+        draw_words(reset = true);
       });
-
-
 
   </script>
 </body>
