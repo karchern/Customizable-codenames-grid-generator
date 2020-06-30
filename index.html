@@ -9,22 +9,42 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
   <script type="text/javascript">
 
-    function handleClick() {
-      //console.log('test')
-      trans = document.getElementById("myVal").value
-      draw_words(reset = false)
-      return false;
+  // I'm assuming that the 'value' property returned from the form is always a string!
+
+
+
+  function regenGrid() {
+    if (document.getElementById("enterSeedVal").value.slice(0,1) === "W") {
+        trans = document.getElementById("enterSeedVal").value
+        draw_words(reset = false)
+    } else if (document.getElementById("enterSeedVal").value.slice(0,1) === "P") {
+        trans = document.getElementById("enterSeedVal").value
+        draw_pics(reset = false)
     }
+    return false;
+  }
+
+  // function regenGridWords() {
+  //   var v = +(document.getElementById("enterSeedPicsVal").value)
+  //   if (typeof v==='number' && (v%1)===0) {
+  //     // v is a proper integer
+  //     trans = v
+  //     draw_words(reset = false)
+  //   }
+  //
+  //   return false;
+  // }
 
     function draw_words(reset = true) {
-
-      // Check if trans argument is defined. If defined, set seed to value in trans. If undefined, run define trans and write to text.
-      // The Math.random function produces a random number based on the current time
-
       if (reset) {
-        trans = Math.floor(Math.random() * 10000)
+        // Define if red or blue starts
+        if (Math.random() * 1 > 0.5){
+          trans = "R"
+        } else {
+          trans = "B"
+        }
+        trans = "W" + trans + (Math.floor(Math.random() * 10000)).toString()
       }
-
       var myrng = new Math.seedrandom(trans)
 
       var margin = {top: 30, right: 30, bottom: 30, left: 30},
@@ -62,13 +82,24 @@
 
         var d = [];
         // Team 1
-        for (let i = 0; i < 8; i++){
-          d.push(0)
+        if (trans.slice(1,2) === "B"){
+          for (let i = 0; i < 8; i++){
+            d.push(0)
+          }
+          // Team 2
+          for (let i = 0; i < 9; i++){
+            d.push(1)
+          }
+        } else if (trans.slice(1,2) === "R") {
+          for (let i = 0; i < 9; i++){
+            d.push(0)
+          }
+          // Team 2
+          for (let i = 0; i < 8; i++){
+            d.push(1)
+          }
         }
-        // Team 2
-        for (let i = 0; i < 9; i++){
-          d.push(1)
-        }
+
         // Neutral
         for (let i = 0; i < 7; i++){
           d.push(2)
@@ -109,11 +140,22 @@
             .attr("height", y.bandwidth() )
             .style("fill", function(d) { return myColor(d.value)} )
 
-    d3.select("#trans").text(trans)
+    d3.select("#trans").text("Enter above to fetch this grid: " +trans)
 
     }
 
-    function draw_pics() {
+    function draw_pics(reset = true) {
+
+      if (reset) {
+        // Define if red or blue starts
+        if (Math.random() * 1 > 0.5){
+          trans = "R"
+        } else {
+          trans = "B"
+        }
+        trans = "P" + trans + (Math.floor(Math.random() * 10000)).toString()
+      }
+      var myrng = new Math.seedrandom(trans)
 
         var margin = {top: 30, right: 30, bottom: 30, left: 30},
         width = 700 - margin.left - margin.right,
@@ -153,12 +195,22 @@
         svg.selectAll('rect').data([]).exit().remove()
         var d = [];
         // Team 1
-        for (let i = 0; i < 7; i++){
-          d.push(0)
-        }
-        // Team 2
-        for (let i = 0; i < 8; i++){
-          d.push(1)
+        if (trans.slice(1,2) === "B"){
+          for (let i = 0; i < 7; i++){
+            d.push(0)
+          }
+          // Team 2
+          for (let i = 0; i < 8; i++){
+            d.push(1)
+          }
+        } else if (trans.slice(1,2) === "R") {
+          for (let i = 0; i < 8; i++){
+            d.push(0)
+          }
+          // Team 2
+          for (let i = 0; i < 7; i++){
+            d.push(1)
+          }
         }
         // Neutral
         for (let i = 0; i < 4; i++){
@@ -173,7 +225,7 @@
         var matrix_object = []
 
         for (i = d.length-1 ; i > 0; i--){
-          const j = Math.floor(Math.random() * i)
+          const j = Math.floor(myrng() * i)
           const temp = d[i]
           d[i] = d[j]
           d[j] = temp
@@ -199,6 +251,9 @@
             .attr("width", x.bandwidth() )
             .attr("height", y.bandwidth() )
             .style("fill", function(d) { return myColor(d.value)} )
+
+    d3.select("#trans").text("Enter above to fetch this grid: " +trans)
+
     }
     </script>
   </script>
@@ -211,17 +266,23 @@
            value="new grid (pictures)"
     />
   </div>
-  <div id="n2" class="btn">
+
+    <!-- <div>
+  <form name="enterSeedPics" onSubmit="return regenGridPics()">
+    <input type="text" id="enterSeedPicsVal" placeholder="Generate grid (pics)">
+  </form>
+  </div> -->
+
+  <div id="n2" class="btn" style="float:left">
     <input name="updateButton"
            type="button"
            value="new grid (words)"
     />
   </div>
 
-
-  <div style="float:left">
-  <form name="myform" onSubmit="return handleClick()">
-    <input type="text" id="myVal" placeholder="Put seed to generate grid&hellip;">
+  <div>
+  <form name="enterSeed" onSubmit="return regenGrid()">
+    <input type="text" id="enterSeedVal" placeholder="Fetch grid">
   </form>
   </div>
 
